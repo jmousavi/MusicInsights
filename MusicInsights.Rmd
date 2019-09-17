@@ -1,0 +1,39 @@
+---
+title: "MusicInsights"
+author: "Jasmin Mousavi"
+date: "9/17/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Packages and Installations
+
+First, we need tidyverse to handle data importing and wrangling...
+
+```{r}
+install.packages("tidyverse")
+library("tidyverse")
+```
+
+##Load Data
+
+```{r}
+survey<- read_csv("https://raw.githubusercontent.com/introdsci/MusicSurvey/master/music-survey.csv")
+preferences <- read_csv("https://raw.githubusercontent.com/introdsci/MusicSurvey/master/preferences-survey.csv")
+```
+##Clean column names
+
+```{r}
+colnames(preferences)
+colnames(survey)[colnames(survey)=="First, we are going to create a pseudonym for you to keep this survey anonymous (more or less). Which pseudonym generator would you prefer?"] <- "generator_name"
+colnames(survey)[colnames(survey)=="What is your pseudonym?"] <- "pseudonym"
+colnames(preferences)[colnames(preferences)=="What was your pseudonym?"] <- "pseudonym"
+colnames(preferences[-c(1,2)])
+preferences
+ggplot(data=preferences[-c(1,2)]) +
+  geom_bar(mapping=aes(x=`40 crew	Not Enough`))
+
+```
