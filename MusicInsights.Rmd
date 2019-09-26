@@ -24,16 +24,40 @@ library("tidyverse")
 survey<- read_csv("https://raw.githubusercontent.com/introdsci/MusicSurvey/master/music-survey.csv")
 preferences <- read_csv("https://raw.githubusercontent.com/introdsci/MusicSurvey/master/preferences-survey.csv")
 ```
-##Clean column names
 
+##Clean up column names for survey
+```{r}
+colnames(survey)
+
+colnames(survey)[colnames(survey)=="Timestamp"] <- "time_submitted"
+colnames(survey)[colnames(survey)=="First, we are going to create a pseudonym for you to keep this survey anonymous (more or less). Which pseudonym generator would you prefer?"] <- "pseudonym_generator"
+colnames(survey)[colnames(survey)=="What is your pseudonym?"] <- "pseudonym"
+colnames(survey)[colnames(survey)=="Sex"] <- "sex"
+colnames(survey)[colnames(survey)=="Major"] <- "academic_major"
+colnames(survey)[colnames(survey)=="Academic Year"] <- "academic_level"
+colnames(survey)[colnames(survey)=="Year you were born (YYYY)"] <- "year_born"
+colnames(survey)[colnames(survey)=="Which musical instruments/talents do you play? (Select all that apply)"] <- "instrument_list"
+colnames(survey)[colnames(survey)=="Artist"] <- "favorite_song_artist"
+colnames(survey)[colnames(survey)=="Song"] <- "favorite_song"
+colnames(survey)[colnames(survey)=="Link to song (on Youtube or Vimeo)"] <- "favorite_song_link"
+
+colnames(survey)
+```
+
+##Clean up preferences column names
 ```{r}
 colnames(preferences)
-colnames(survey)[colnames(survey)=="First, we are going to create a pseudonym for you to keep this survey anonymous (more or less). Which pseudonym generator would you prefer?"] <- "generator_name"
-colnames(survey)[colnames(survey)=="What is your pseudonym?"] <- "pseudonym"
+
+colnames(preferences)[colnames(preferences)=="Timestamp"] <- "time_submitted"
 colnames(preferences)[colnames(preferences)=="What was your pseudonym?"] <- "pseudonym"
-colnames(preferences[-c(1,2)])
-preferences
-ggplot(data=preferences[-c(1,2)]) +
-  geom_bar(mapping=aes(x=`40 crew	Not Enough`))
+```
+
+##Create tables 
+```{r}
+library("dplyr")
+
+Person <- tibble(pseudonym_generator=survey$pseudonym_generator, pseudonym=survey$pseudonym, sex=survey$sex, academic_major=survey$academic_major, academic_level=survey$academic_level, year_born=survey$year_born, time_submitted=survey$time_submitted)
+
+FavoriteSong <- tibble(pseudonym=survey$pseudonym, favorite_song_artist=survey$favorite_song_artist, favorite_song=survey$favorite_song, favorite_song_link=survey$favorite_song_link)
 
 ```
