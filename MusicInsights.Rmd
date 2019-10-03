@@ -5,16 +5,13 @@ date: "9/17/2019"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 ##Packages and Installations
 
 First, we need tidyverse to handle data importing and wrangling...
 
 ```{r}
-install.packages("tidyverse")
+#install.packages("tidyverse")
 library("tidyverse")
 ```
 
@@ -71,8 +68,8 @@ Person$time_submitted[1]$min
 #Levels -> categorical variable
 Person$academic_level <- as.factor(Person$academic_level)
 Person$academic_major <- as.factor(Person$academic_major)
+Ratings$artist_song <- as.factor(Ratings$artist_song)
+Ratings$pseudonym <- as.factor(Ratings$pseudonym)
 levels(Person$academic_major)[levels(Person$academic_major) == "Computer information systems"] <- "Computer Information Systems"
 
 ```
-#lapply( variable, function(x) legth(strsplit(as.character(x), "[;]")[[1
-]])
