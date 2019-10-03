@@ -27,7 +27,7 @@ preferences <- read_csv("https://raw.githubusercontent.com/introdsci/MusicSurvey
 
 ##Clean up column names for survey
 ```{r}
-colnames(survey)
+#colnames(survey)
 
 colnames(survey)[colnames(survey)=="Timestamp"] <- "time_submitted"
 colnames(survey)[colnames(survey)=="First, we are going to create a pseudonym for you to keep this survey anonymous (more or less). Which pseudonym generator would you prefer?"] <- "pseudonym_generator"
@@ -60,4 +60,19 @@ Person <- tibble(pseudonym_generator=survey$pseudonym_generator, pseudonym=surve
 
 FavoriteSong <- tibble(pseudonym=survey$pseudonym, favorite_song_artist=survey$favorite_song_artist, favorite_song=survey$favorite_song, favorite_song_link=survey$favorite_song_link)
 
+#Ratings
+Ratings <- preferences[2:45]
+Ratings <- Ratings %>% gather(colnames(Ratings[2:44]), key="artist_song", value="ratings")
+Ratings
+
+Person$time_submitted<- as.POSIXlt(parse_datetime(Person$time_submitted, format="%m/%d/%y %H:%M"))
+Person$time_submitted[1]$min
+
+#Levels -> categorical variable
+Person$academic_level <- as.factor(Person$academic_level)
+Person$academic_major <- as.factor(Person$academic_major)
+levels(Person$academic_major)[levels(Person$academic_major) == "Computer information systems"] <- "Computer Information Systems"
+
 ```
+#lapply( variable, function(x) legth(strsplit(as.character(x), "[;]")[[1
+]])
