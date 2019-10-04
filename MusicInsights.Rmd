@@ -60,7 +60,6 @@ FavoriteSong <- tibble(pseudonym=survey$pseudonym, favorite_song_artist=survey$f
 #Ratings
 Ratings <- preferences[2:45]
 Ratings <- Ratings %>% gather(colnames(Ratings[2:44]), key="artist_song", value="ratings")
-Ratings
 
 Person$time_submitted<- as.POSIXlt(parse_datetime(Person$time_submitted, format="%m/%d/%y %H:%M"))
 Person$time_submitted[1]$min
@@ -71,5 +70,9 @@ Person$academic_major <- as.factor(Person$academic_major)
 Ratings$artist_song <- as.factor(Ratings$artist_song)
 Ratings$pseudonym <- as.factor(Ratings$pseudonym)
 levels(Person$academic_major)[levels(Person$academic_major) == "Computer information systems"] <- "Computer Information Systems"
+
+head(Person)
+head(FavoriteSong)
+head(Ratings)
 
 ```
