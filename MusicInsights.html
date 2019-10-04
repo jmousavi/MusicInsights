@@ -526,6 +526,30 @@ head(Person)</code></pre>
 ## 4 Smooth Yuba      &quot;40 crew\tNot Enough&quot;       8
 ## 5 Silence          &quot;40 crew\tNot Enough&quot;       3
 ## 6 West Garden      &quot;40 crew\tNot Enough&quot;       4</code></pre>
+<pre class="r"><code>#Challenge 1 &amp; Challenge 3
+Instruments &lt;- tibble(pseudonym=survey$pseudonym, instrument=survey$instrument_list)
+#sep with &quot;, &quot; would eliminate the mutate I do later, but I am going to leave it
+Instruments &lt;- Instruments %&gt;% separate_rows(instrument, sep=&quot;,&quot;, convert=TRUE)
+
+#remove white space from beginning 
+Instruments &lt;- mutate_if(Instruments, is.character, str_replace_all, 
+                         pattern=&quot;^\\s+&quot;, replacement=&quot;&quot;)
+
+#Challenge 2
+Instruments$instrument &lt;- ifelse(grepl(&quot;Piano|piano&quot;, Instruments$instrument), &quot;Piano&quot;, Instruments$instrument)
+Instruments$instrument &lt;- ifelse(grepl(&quot;Drums|drums&quot;, Instruments$instrument), &quot;Drums&quot;, Instruments$instrument)
+Instruments$instrument &lt;- ifelse(grepl(&quot;Ukulele|ukulele&quot;, Instruments$instrument), &quot;Ukulele&quot;, Instruments$instrument)
+
+head(Instruments)</code></pre>
+<pre><code>## # A tibble: 6 x 2
+##   pseudonym        instrument
+##   &lt;chr&gt;            &lt;chr&gt;     
+## 1 Lord Los Angeles Rap       
+## 2 Heroes War       Guitar    
+## 3 Puppets War      Guitar    
+## 4 West Magic       Trumpet   
+## 5 Eller Angel      Piano     
+## 6 Eller Angel      Ukulele</code></pre>
 
 
 

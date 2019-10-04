@@ -76,3 +76,22 @@ head(FavoriteSong)
 head(Ratings)
 
 ```
+
+```{r}
+#Challenge 1 & Challenge 3
+Instruments <- tibble(pseudonym=survey$pseudonym, instrument=survey$instrument_list)
+#sep with ", " would eliminate the mutate I do later, but I am going to leave it
+Instruments <- Instruments %>% separate_rows(instrument, sep=",", convert=TRUE)
+
+#remove white space from beginning 
+Instruments <- mutate_if(Instruments, is.character, str_replace_all, 
+                         pattern="^\\s+", replacement="")
+
+#Challenge 2
+Instruments$instrument <- ifelse(grepl("Piano|piano", Instruments$instrument), "Piano", Instruments$instrument)
+Instruments$instrument <- ifelse(grepl("Drums|drums", Instruments$instrument), "Drums", Instruments$instrument)
+Instruments$instrument <- ifelse(grepl("Ukulele|ukulele", Instruments$instrument), "Ukulele", Instruments$instrument)
+
+head(Instruments)
+
+```
