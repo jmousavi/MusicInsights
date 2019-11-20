@@ -1,0 +1,92 @@
+---
+title: "part 2"
+author: "Jasmin Mousavi"
+date: "11/14/2019"
+output: html_document
+---
+### Gather tidy tables
+```{r include=FALSE}
+library("knitr")
+library("tidyverse")
+purl("insights.Rmd", output = "part1.r")
+source("part1.r")
+```
+
+### Gather some statistics 
+```{r}
+#get the average rating of songs (including rating of their favorite song)
+preferences$avg_rating <- rowMeans(preferences[3:45], na.rm=TRUE)
+
+#drop Na's and save talents as new table talents2
+talents2 <- as.tibble(talents) %>% drop_na(instruments)
+#get a count of number of instruments each person plays
+talents2$count_instruments <- as.numeric(ave(talents2$pseudonym, talents2$pseudonym, FUN = length))
+```
+
+### Tidy new statistics into exisiting tables
+```{r}
+#join average ratings
+person_prediction_table <- person %>% 
+                    left_join(preferences, by="pseudonym") %>%
+                    select(time_submitted, generator, pseudonym, sex, major, academic_level, birth_year,avg_rating)
+#join instruments count
+person_prediction_table <- person_prediction_table %>% 
+                    left_join(talents2, by="pseudonym") %>%
+                    select(time_submitted, generator, pseudonym, sex, major, academic_level, birth_year,avg_rating,count_instruments)
+#set instrument count to 0 if NA
+person_prediction_table$count_instruments[is.na(person_prediction_table$count_instruments)] <- 0
+#drop na rows (only one is from average)
+person_prediction_table <- na.omit(person_prediction_table) 
+#change major name
+person_prediction_table$major[person_prediction_table$major %in% "Computer information systems"] <- "Computer Information Systems"
+```
+
+### Start building models
+```{r}
+library(caret) #lm model
+set.seed(12) #seed data to get the same results every run
+#create train/test data (75% train, 25% test)
+sample <- createDataPartition(person_prediction_table$avg_rating, p=0.75, list=FALSE)
+train <- person_prediction_table[sample, ]
+test <- person_prediction_table[-sample, ]
+
+#First model with most of the table data
+train_model <- lm(formula= avg_rating ~ time_submitted +
+                                        generator + 
+                                        sex + 
+                                        major +
+                                        academic_level +
+                                        birth_year + 
+                                        count_instruments, data=train)
+summary(train_model) #look at the p value and see what values are significant 
+```
+
+* Lots of insignificant models, lets create one with time submitted, generator, sex, and academic level
+
+```{r}
+#new model with time_submitted, generator, sed, and academic_level
+train_model2 <- lm(formula= avg_rating ~ generator + 
+                                        sex + 
+                                        academic_level +
+                                        time_submitted, data=train)
+summary(train_model2) #look at p values of the new model 
+```
+* the p value could be lower, but it is still under .05
+```{r}
+#create predictions
+predictions <- train_model2 %>% predict(test)
+#calculate errors 
+errors <- data.frame(R2 = R2(predictions, test$avg_rating),
+           RMSE = RMSE(predictions, test$avg_rating),
+           MAE = MAE(predictions, test$avg_rating))
+
+errors
+ggplot(test, aes(x=predictions, y=avg_rating), ) + geom_point()
+```
+
+
+The model is bad for the following reasons:
+
+* The R2 value is very low and indicates that the model explains none of the variability of the response data around its mean.
+* The datum ranges from around 4 - 8 for the average ratings, therefore the RMSE is low.
+* The MAE and RMSE are similar, they can be interpreted similarly
